@@ -48,13 +48,28 @@ public:
         return _width;
     }
 
-    char GetSymbolByCoord(size_t x, size_t y) const {
+    char GetSymbolByCoord(size_t x, size_t y) {
         if (x == 0 || x == _height - 1 || y == 0 || y == _width - 1) {
+            return '#';
+        }
+        if (_matrix[3][_count][0] == x && _matrix[3][_count][1] == y){
+            _count += 1;
             return '#';
         }
         return ' ';
     }
 private:
+    int _matrix[10][10][2] = {{},
+                            {{3, 5}, {4, 3}},
+                            {{3, 2}, {3, 7}, {6, 3}},
+                            {{3, 3}, {3, 7}, {5, 5}, {7, 7}},
+                            {{3, 3}, {3, 4}, {4, 3}},
+                            {{3, 3}, {3, 4}, {4, 3}},
+                            {{3, 3}, {3, 4}, {4, 3}},
+                            {{3, 3}, {3, 4}, {4, 3}},
+                            {{3, 3}, {3, 4}, {4, 3}},
+                            {{3, 3}, {3, 4}, {4, 3}}};
+    int _count = 0;
     size_t _height;
     size_t _width;
 };
@@ -102,10 +117,11 @@ private:
 };
 
 int main() {
-//    TField field(10, 10);
-//    TGameFrame frame(field, 10, 10);
+    TField field(10, 10);
+    TGameFrame frame(field, 10, 10);
     TSnake snake(0, 0);
     snake.AddToTail({1, 1});
     std::cout << snake.CheckForCollision(1, 0) << std::endl;
-//    frame.DrawFrame();
+    frame.DrawFrame();
+    system("pause");
 }
