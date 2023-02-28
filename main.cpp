@@ -1,6 +1,7 @@
-#include<iostream>
+﻿#include<iostream>
 #include<vector>
 #include<algorithm>
+#include<cstdlib>
 
 struct TOffset {
     size_t x;
@@ -21,10 +22,10 @@ public:
         _points[0].y = headY;
     }
 
-    bool CheckForCollision(size_t x, size_t y) {
+    bool CheckForCollision(size_t x, size_t y) const {
         return std::any_of(_points.begin(), _points.end(), [x, y](const TPoint& a) {
             return a.x == x && a.y == y;
-        });
+            });
     }
 
     void AddToTail(const TPoint& point) {
@@ -37,7 +38,7 @@ private:
 class TField {
 public:
     TField(size_t _height, size_t _width)
-            : _height(_height), _width(_width)
+        : _height(_height), _width(_width)
     {}
 
     size_t GetHeight() const {
@@ -63,7 +64,7 @@ class TGameFrame {
 public:
     TGameFrame(TField field, size_t height, size_t width)
         :
-        _field_offset({0, 0}),
+        _field_offset({ 0, 0 }),
         _main_field(field),
         _height(height),
         _width(width)
@@ -101,11 +102,49 @@ private:
     }
 };
 
+class TFruitBucket {
+private:
+    std::vector<TPoint> _points;
+    const TSnake& snake;
+    size_t _height;
+    size_t _width;
+    size_t AppleX;
+    size_t AppleY;
+public:
+
+    size_t GetAppleX() const {
+        return AppleX;
+    }
+
+    size_t GetAppleY() const {
+        return AppleY;
+    }
+
+    TFruitBucket(const TSnake& snake)
+        : snake(snake)
+    {}
+
+    TPoint Randomcoord()
+    {
+        srand(time(0));
+        size_t appleX = rand() % _height;
+        size_t appleY = rand() % _width;
+                   
+        while (snake.CheckForCollision(appleX, appleY)) {
+            appleX = rand() % _height;
+            appleY = rand() % _width;
+        }
+        return { appleX, appleY };
+    }
+
+    //EmptySpace -> paint
+};
+
 int main() {
-//    TField field(10, 10);
-//    TGameFrame frame(field, 10, 10);
+        TField field(10, 10);
+        TGameFrame frame(field, 10, 10);
     TSnake snake(0, 0);
-    snake.AddToTail({1, 1});
+    snake.AddToTail({ 1, 1 });
     std::cout << snake.CheckForCollision(1, 0) << std::endl;
-//    frame.DrawFrame();
+       frame.DrawFrame();
 }
