@@ -36,8 +36,8 @@ private:
 
 class TField {
 public:
-    TField(size_t _height, size_t _width)
-            : _height(_height), _width(_width)
+    TField(size_t _height, size_t _width, int _map_level)
+            : _height(_height), _width(_width), _map_level(_map_level)
     {}
 
     size_t GetHeight() const {
@@ -48,13 +48,24 @@ public:
         return _width;
     }
 
-    char GetSymbolByCoord(size_t x, size_t y) const {
+    char GetSymbolByCoord(size_t x, size_t y) {
         if (x == 0 || x == _height - 1 || y == 0 || y == _width - 1) {
+            return '#';
+        }
+        if (_matrix[_map_level - 1][_count][0] == x && _matrix[_map_level - 1][_count][1] == y){
+            _count += 1;
             return '#';
         }
         return ' ';
     }
 private:
+    int _map_level;
+    int _matrix[4][8][2] = {{},
+                            {{5, 1}, {5, 2}, {5, 7}, {5, 8}},
+                            {{2, 5}, {3, 5}, {4, 5}, {5, 5}, {6, 5}, {7, 5}},
+                            {{3, 1}, {3, 2}, {3, 7}, {3, 8}, {6, 3}, {6, 4}, {6, 5}, {6, 6}}};
+                            
+    int _count = 0;
     size_t _height;
     size_t _width;
 };
@@ -102,10 +113,14 @@ private:
 };
 
 int main() {
-//    TField field(10, 10);
-//    TGameFrame frame(field, 10, 10);
+    int level;
+    std::cout<<"Choose your map level(from 1 to 4): ";
+    std::cin >> level;
+    TField field(10, 10, level);
+    TGameFrame frame(field, 10, 10);
     TSnake snake(0, 0);
     snake.AddToTail({1, 1});
     std::cout << snake.CheckForCollision(1, 0) << std::endl;
-//    frame.DrawFrame();
+    frame.DrawFrame();
+    system("pause");
 }
