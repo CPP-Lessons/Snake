@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<string>
 
 struct TOffset {
     size_t x;
@@ -15,7 +16,7 @@ struct TPoint {
 class TSnake {
 public:
     TSnake(size_t headX, size_t headY)
-        : _points(std::vector<TPoint>(1))
+            : _points(std::vector<TPoint>(1))
     {
         _points[0].x = headX;
         _points[0].y = headY;
@@ -59,14 +60,88 @@ private:
     size_t _width;
 };
 
+class TScore
+{
+public:
+
+    TScore()
+    {
+        _score = 0;
+        _time = 0;
+    }
+
+    void Add(int score)
+    {
+        _score+= score;
+    }
+
+    std::string GetScoreString()
+    {
+        return ("Score: " + std::to_string(_score));
+    }
+
+    void AddTime(float deltaTime)
+    {
+        _time += deltaTime;
+    }
+
+    std::string GetTimeString()
+    {
+        return ("Time: " + std::to_string(_time));
+    }
+private:
+    int _score;
+    unsigned _time;
+};
+
+class TScoreBoard
+{
+public:
+    void AddScore(TScore score)
+    {
+        _scores.push_back(score);
+    }
+
+    std::string GetStringScores()
+    {
+        for(int i = 0; i < _scores.size(); i++)
+        {
+            std::cout << "Game: " << i << std::endl;
+            std::cout << _scores[i].GetScoreString() << std::endl;
+            std::cout << _scores[i].GetTimeString() << std::endl << std::endl;
+        }
+    }
+
+private:
+    std::vector<TScore> _scores;
+};
+
+
+class THeadVisualisation
+{
+public:
+    char getSymbolByCoord(size_t x, size_t y)
+    {
+        std::string currentScoreString = _score.GetScoreString();
+        if (y < currentScoreString.size() &&  x == 0)
+            return currentScoreString[y];
+        currentScoreString = _score.GetTimeString();
+        if(y < currentScoreString.size() && x == 1)
+            return currentScoreString[y];
+        return ' ';
+    }
+private:
+    TScore _score;
+};
+
 class TGameFrame {
 public:
     TGameFrame(TField field, size_t height, size_t width)
-        :
-        _field_offset({0, 0}),
-        _main_field(field),
-        _height(height),
-        _width(width)
+            :
+            _field_offset({0, 0}),
+            _main_field(field),
+            _height(height),
+            _width(width)
     {}
 
     void SetFieldOffset(TOffset offset) {
@@ -82,6 +157,7 @@ public:
         }
     }
 private:
+    THeadVisualisation _head;
     TField _main_field;
     TOffset _field_offset;
     size_t _height;
@@ -94,18 +170,19 @@ private:
         size_t minFieldW = _field_offset.y;
         size_t maxFieldW = minFieldW + _main_field.GetWidth();
         if (x >= minFieldH && x < maxFieldH && y >= minFieldW && y < maxFieldW) {
-            return _main_field.GetSymbolByCoord(x, y);
+            return _main_field.GetSymbolByCoord(x - _field_offset.x, y - _field_offset.y);
         }
-        std::cout << "Ooops!" << std::endl;
-        return ' ';
+        _head.getSymbolByCoord(x, y);
     }
 };
 
 int main() {
-//    TField field(10, 10);
-//    TGameFrame frame(field, 10, 10);
-    TSnake snake(0, 0);
-    snake.AddToTail({1, 1});
-    std::cout << snake.CheckForCollision(1, 0) << std::endl;
-//    frame.DrawFrame();
+
+    TField field(10, 10);
+    TGameFrame frame(field, 20, 20);
+    frame.SetFieldOffset({10, 0});
+//    TSnake snake(0, 0);
+//    snake.AddToTail({1, 1});
+//    std::cout << snake.CheckForCollision(1, 0) << std::endl;
+    frame.DrawFrame();
 }
