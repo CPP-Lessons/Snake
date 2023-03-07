@@ -2,6 +2,10 @@
 #include<vector>
 #include<algorithm>
 #include<string>
+#include<thread>
+#include<mutex>
+#include<chrono>
+#include<windows.h>
 
 struct TOffset {
     size_t x;
@@ -12,6 +16,16 @@ struct TPoint {
     size_t x;
     size_t y;
 };
+
+struct TConfig {
+    size_t fps;
+};
+
+TConfig config = {
+        10
+};
+
+std::mutex mtx;
 
 class TSnake {
 public:
@@ -102,15 +116,16 @@ public:
         _scores.push_back(score);
     }
 
-    std::string GetStringScores()
-    {
-        for(int i = 0; i < _scores.size(); i++)
-        {
-            std::cout << "Game: " << i << std::endl;
-            std::cout << _scores[i].GetScoreString() << std::endl;
-            std::cout << _scores[i].GetTimeString() << std::endl << std::endl;
-        }
-    }
+//    void GetStringScores()
+//    {
+//        for(int i = 0; i < _scores.size(); i++)
+//        {
+//            std::cout << "Game: " << i << std::endl;
+//            std::cout << _scores[i].GetScoreString() << std::endl;
+//            std::cout << _scores[i].GetTimeString() << std::endl << std::endl;
+//        }
+//        return
+//    }
 
 private:
     std::vector<TScore> _scores;
@@ -172,17 +187,68 @@ private:
         if (x >= minFieldH && x < maxFieldH && y >= minFieldW && y < maxFieldW) {
             return _main_field.GetSymbolByCoord(x - _field_offset.x, y - _field_offset.y);
         }
-        _head.getSymbolByCoord(x, y);
+        return _head.getSymbolByCoord(x, y);
     }
 };
 
-int main() {
+void FakeConsole() {
+    mtx.lock();
+    std::cout << "FakeConsole";
+    mtx.unlock();
+}
 
-    TField field(10, 10);
-    TGameFrame frame(field, 20, 20);
-    frame.SetFieldOffset({10, 0});
+void UpdateFrame() {
+
+    while(true) {
+//        TSnake.isPressed();
+
+        FakeConsole();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    }
+}
+
+void GameOver(){
+    std::vector<std::string> gm = {
+        "  ####   ####  ##   ## ##### ",
+        " ##     ##  ## ### ### ## ",
+        " ## ### ###### ## # ## #### ",
+        " ##  ## ##  ## ##   ## ## ",
+        "  ####  ##  ## ##   ## ##### ",
+        " ",
+        "  ####  ##  ## ##### ##### ",
+        " ##  ## ##  ## ##    ## ## ",
+        " ##  ## ##  ## ####  ##### ",
+        " ##  ##  ####  ##    ##  ## ",
+        "  ####    ##   ##### ##  ## "
+    };
+    system("cls");
+    mtx.lock();
+
+    for(int i = gm.size() - 1; i >= 0; i--) {
+        for(int j = i; j < gm.size(); j++){
+            std::cout << gm[j] << std::endl;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if(i > 0){
+            system("cls");
+        }
+    }
+
+    mtx.unlock();
+}
+
+int main() {
+//    TField field(10, 10);
+//    TGameFrame frame(field, 20, 20);
+//    frame.SetFieldOffset({10, 0});
 //    TSnake snake(0, 0);
 //    snake.AddToTail({1, 1});
 //    std::cout << snake.CheckForCollision(1, 0) << std::endl;
-    frame.DrawFrame();
+//    frame.DrawFrame();
+    std::thread thr(GameOver);
+    thr.join();
+    return 0;
 }
