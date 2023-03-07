@@ -1,3 +1,4 @@
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -26,9 +27,9 @@ void Game_over(){
 	gm.push_back(" ##  ##  ####  ##    ##  ## ");
 	gm.push_back("  ####    ##   ##### ##  ## ");
 	system("cls");
-	int temp = 12;
+	int temp = 11;
 	mtx.lock();
-	for(int i = 11; i >= 0; i--){
+	for(int i = 10; i >= 0; i--){
 		for(int j = i; j < temp; j++){
 			cout << gm[j] << endl;
 		}
