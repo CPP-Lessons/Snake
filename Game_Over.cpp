@@ -26,15 +26,14 @@ void Game_over(){
 	gm.push_back(" ##  ##  ####  ##    ##  ## ");
 	gm.push_back("  ####    ##   ##### ##  ## ");
 	system("cls");
-	int temp = 0;
+	int temp = 12;
 	mtx.lock();
-	for(int i = 0; i < 12; i++){
-		for(int j = 0; j < temp; j++){
+	for(int i = 11; i >= 0; i--){
+		for(int j = i; j < temp; j++){
 			cout << gm[j] << endl;
 		}
 	Sleep(100);
-	temp += 1;
-	if(i < 11){
+	if(i > 0){
 	system("cls");
 	}
 	}
